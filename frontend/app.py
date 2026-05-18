@@ -30,13 +30,30 @@ from backend.prompt_engine import (
     generate_cover_letter
 )
 
+from backend.utils import create_resume_docx
+
 # Page config
 st.set_page_config(
     page_title="AI Resume Optimizer",
     layout="wide"
 )
 
-st.title("AI Resume Optimizer")
+st.title("AI-Powered ATS Resume Optimizer")
+
+st.sidebar.title("AI Resume Optimizer")
+
+st.sidebar.info(
+    """
+    Upload your resume and compare it
+    against a job description using AI.
+
+    Features:
+    - ATS Score
+    - Missing Skills
+    - Resume Optimization
+    - Cover Letter Generation
+    """
+)
 
 st.write(
     "Upload your resume and compare it with a job description."
@@ -107,20 +124,28 @@ if st.session_state.analysis_done:
         )
 
         # Display Results
-        st.subheader("ATS Match Score")
+        col1, col2 = st.columns(2)
 
-        st.metric(
-            label="ATS Score",
-            value=f"{ats_score:.2f}%"
-        )
+        with col1:
 
-        st.subheader("Extracted Resume Skills")
+            st.subheader("ATS Match Score")
 
-        st.write(resume_skills)
+            st.metric(
+                label="ATS Score",
+                value=f"{ats_score:.2f}%"
+            )
 
-        st.subheader("Missing Skills")
+            st.subheader("Missing Skills")
 
-        st.write(missing_skills)
+            st.write(missing_skills)
+
+        with col2:
+
+            st.subheader("Extracted Resume Skills")
+
+            st.write(resume_skills)
+
+        st.divider()
 
         st.subheader("AI Professional Summary")
 
@@ -133,9 +158,28 @@ if st.session_state.analysis_done:
             target_role
         )
 
+        st.divider()
+
         st.subheader("Full ATS-Optimized Resume")
 
         st.write(optimized_resume)
+
+        # Create DOCX Resume
+        resume_docx_path = "outputs/optimized_resume.docx"
+
+        create_resume_docx(
+            optimized_resume,
+            resume_docx_path
+        )
+
+        with open(resume_docx_path, "rb") as file:
+
+            st.download_button(
+                label="Download Optimized Resume (DOCX)",
+                data=file,
+                file_name="optimized_resume.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
 
         # Generate Cover Letter
         cover_letter = generate_cover_letter(
@@ -144,10 +188,31 @@ if st.session_state.analysis_done:
             target_role
         )
 
+        st.divider()
+
         st.subheader("AI Generated Cover Letter")
 
         st.write(cover_letter)
 
+
+        # Create DOCX Cover Letter
+        cover_docx_path = "outputs/cover_letter.docx"
+
+        create_resume_docx(
+            cover_letter,
+            cover_docx_path
+        )
+
+        with open(cover_docx_path, "rb") as file:
+
+            st.download_button(
+                label="Download Cover Letter (DOCX)",
+                data=file,
+                file_name="cover_letter.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+
+        st.divider()
 
         # Resume Bullet Optimizer
         st.subheader("AI Resume Bullet Optimizer")
