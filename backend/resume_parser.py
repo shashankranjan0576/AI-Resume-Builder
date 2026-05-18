@@ -29,7 +29,11 @@ def clean_text(text):
     Clean extracted resume text
     """
 
+    # Remove extra spaces/newlines
     text = re.sub(r'\s+', ' ', text)
+
+    # Fix merged words around punctuation
+    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
 
     return text.strip()
 
