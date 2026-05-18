@@ -25,7 +25,9 @@ from backend.ats_engine import (
 
 from backend.prompt_engine import (
     generate_professional_summary,
-    rewrite_resume_bullet
+    rewrite_resume_bullet,
+    generate_full_resume,
+    generate_cover_letter
 )
 
 # Page config
@@ -123,6 +125,29 @@ if st.session_state.analysis_done:
         st.subheader("AI Professional Summary")
 
         st.write(summary)
+
+        # Generate Full Resume
+        optimized_resume = generate_full_resume(
+            resume_text,
+            job_description,
+            target_role
+        )
+
+        st.subheader("Full ATS-Optimized Resume")
+
+        st.write(optimized_resume)
+
+        # Generate Cover Letter
+        cover_letter = generate_cover_letter(
+            resume_text,
+            job_description,
+            target_role
+        )
+
+        st.subheader("AI Generated Cover Letter")
+
+        st.write(cover_letter)
+
 
         # Resume Bullet Optimizer
         st.subheader("AI Resume Bullet Optimizer")

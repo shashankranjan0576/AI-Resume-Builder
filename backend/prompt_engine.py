@@ -95,6 +95,117 @@ def generate_professional_summary(candidate_info, target_role):
     return response.choices[0].message.content
 
 
+def generate_full_resume(resume_text, job_description, target_role):
+
+    prompt = f"""
+    Generate an ATS-optimized resume.
+
+    Requirements:
+    - Keep it professional
+    - ATS-friendly formatting
+    - Use concise bullet points
+    - Improve recruiter readability
+    - Optimize for the target role
+    - Use strong action verbs
+    - Do NOT invent fake experience
+    - Do NOT invent fake companies
+    - Do NOT invent fake metrics
+    - Naturally integrate relevant keywords
+    - Keep formatting clean
+
+    Resume Information:
+    {resume_text}
+
+    Job Description:
+    {job_description}
+
+    Target Role:
+    {target_role}
+
+    Output Format:
+
+    PROFESSIONAL SUMMARY
+
+    SKILLS
+
+    EXPERIENCE
+
+    PROJECTS
+
+    EDUCATION
+    """
+
+    response = client.chat.completions.create(
+
+        model="llama-3.3-70b-versatile",
+
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert ATS resume writer."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+
+        temperature=0.5
+    )
+
+    return response.choices[0].message.content
+
+def generate_cover_letter(
+    resume_text,
+    job_description,
+    target_role
+):
+
+    prompt = f"""
+    Generate a professional cover letter.
+
+    Requirements:
+    - Keep it professional
+    - ATS-friendly language
+    - Concise and recruiter-focused
+    - Highlight relevant skills
+    - Align with the target role
+    - Do NOT invent fake experience
+    - Keep it under 300 words
+
+    Resume Information:
+    {resume_text}
+
+    Job Description:
+    {job_description}
+
+    Target Role:
+    {target_role}
+    """
+
+    response = client.chat.completions.create(
+
+        model="llama-3.3-70b-versatile",
+
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert resume and cover letter writer."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+
+        temperature=0.5
+    )
+
+    return response.choices[0].message.content
+
+
+
+
 if __name__ == "__main__":
 
     candidate_info = """
