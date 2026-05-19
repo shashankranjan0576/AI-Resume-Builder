@@ -204,6 +204,56 @@ def generate_cover_letter(
     return response.choices[0].message.content
 
 
+def generate_ats_suggestions(
+    resume_text,
+    job_description,
+    missing_skills
+):
+
+    prompt = f"""
+    Analyze the resume against the job description
+    and provide ATS improvement suggestions.
+
+    Requirements:
+    - Keep suggestions concise
+    - Use bullet points
+    - Focus on ATS optimization
+    - Focus on recruiter readability
+    - Suggest missing keywords naturally
+    - Do NOT invent fake experience
+    - Maximum 6 suggestions
+
+    Resume:
+    {resume_text}
+
+    Job Description:
+    {job_description}
+
+    Missing Skills:
+    {missing_skills}
+    """
+
+    response = client.chat.completions.create(
+
+        model="llama-3.3-70b-versatile",
+
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an ATS optimization expert."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+
+        temperature=0.4
+    )
+
+    return response.choices[0].message.content
+
+
 
 
 if __name__ == "__main__":

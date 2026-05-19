@@ -27,7 +27,8 @@ from backend.prompt_engine import (
     generate_professional_summary,
     rewrite_resume_bullet,
     generate_full_resume,
-    generate_cover_letter
+    generate_cover_letter,
+    generate_ats_suggestions
 )
 
 from backend.utils import create_resume_docx
@@ -67,8 +68,14 @@ uploaded_file = st.file_uploader(
 
 # Job Description Input
 job_description = st.text_area(
-    "Paste Job Description",
+    "Paste Job Description (Optional)",
     height=200
+)
+
+# Upload JD PDF
+jd_pdf = st.file_uploader(
+    "Upload Job Description PDF (Optional)",
+    type=["pdf"]
 )
 
 target_role = st.text_input(
@@ -84,7 +91,7 @@ if st.button("Analyze Resume"):
 
 if st.session_state.analysis_done:
 
-    if uploaded_file and job_description:
+    if uploaded_file and (job_description or jd_pdf):
 
         # Save uploaded PDF
         save_path = os.path.join(
@@ -99,6 +106,25 @@ if st.session_state.analysis_done:
         resume_text = extract_text_from_pdf(save_path)
 
         resume_text = clean_text(resume_text)
+
+        # Handle JD PDF Upload
+        if jd_pdf:
+
+            jd_path = os.path.join(
+                "uploads",
+                jd_pdf.name
+            )
+
+            with open(jd_path, "wb") as f:
+                f.write(jd_pdf.getbuffer())
+
+            job_description = extract_text_from_pdf(
+                jd_path
+            )
+
+            job_description = clean_text(
+                job_description
+            )
 
         # Extract Skills
         resume_skills = extract_skills(resume_text)
@@ -138,6 +164,19 @@ if st.session_state.analysis_done:
             st.subheader("Missing Skills")
 
             st.write(missing_skills)
+
+        # ATS Suggestions
+        suggestions = generate_ats_suggestions(
+            resume_text,
+            job_description,
+            missing_skills
+        )
+
+        st.divider()
+
+        st.subheader("ATS Improvement Suggestions")
+
+        st.write(suggestions)
 
         with col2:
 
