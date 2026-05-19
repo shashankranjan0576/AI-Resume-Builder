@@ -31,7 +31,11 @@ from backend.prompt_engine import (
     generate_ats_suggestions
 )
 
-from backend.utils import create_resume_docx
+from backend.utils import (
+    create_resume_docx,
+    create_resume_pdf,
+    clean_ai_output
+)
 
 # Page config
 st.set_page_config(
@@ -197,6 +201,10 @@ if st.session_state.analysis_done:
             target_role
         )
 
+        optimized_resume = clean_ai_output(
+            optimized_resume
+        )
+
         st.divider()
 
         st.subheader("Full ATS-Optimized Resume")
@@ -220,11 +228,33 @@ if st.session_state.analysis_done:
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             )
 
+        # Create PDF Resume
+        resume_pdf_path = "outputs/optimized_resume.pdf"
+
+        create_resume_pdf(
+            optimized_resume,
+            resume_pdf_path
+        )
+
+        with open(resume_pdf_path, "rb") as file:
+
+            st.download_button(
+                label="Download Optimized Resume (PDF)",
+                data=file,
+                file_name="optimized_resume.pdf",
+                mime="application/pdf"
+            )
+
+
         # Generate Cover Letter
         cover_letter = generate_cover_letter(
             resume_text,
             job_description,
             target_role
+        )
+
+        cover_letter = clean_ai_output(
+            cover_letter
         )
 
         st.divider()
@@ -251,6 +281,24 @@ if st.session_state.analysis_done:
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             )
 
+        # Create PDF Cover Letter
+        cover_pdf_path = "outputs/cover_letter.pdf"
+
+        create_resume_pdf(
+            cover_letter,
+            cover_pdf_path
+        )
+
+        with open(cover_pdf_path, "rb") as file:
+
+            st.download_button(
+                label="Download Cover Letter (PDF)",
+                data=file,
+                file_name="cover_letter.pdf",
+                mime="application/pdf"
+            )
+
+
         st.divider()
 
         # Resume Bullet Optimizer
@@ -268,6 +316,12 @@ if st.session_state.analysis_done:
                 optimized_bullet = rewrite_resume_bullet(
                     user_bullet
                 )
+
+
+                optimized_bullet = clean_ai_output(
+                    optimized_bullet
+                )
+
 
                 st.success("Optimized Bullet Point")
 
