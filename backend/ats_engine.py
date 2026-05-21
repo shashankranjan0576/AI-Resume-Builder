@@ -3,8 +3,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 import spacy
 
 # Load spaCy English model
-nlp = spacy.load("en_core_web_sm")
+try:
+    nlp = spacy.load("en_core_web_sm")
 
+except:
+
+    nlp = spacy.blank("en")
 # Load transformer model
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
