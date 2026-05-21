@@ -98,6 +98,9 @@ if st.session_state.analysis_done:
     if uploaded_file and (job_description or jd_pdf):
 
         # Save uploaded PDF
+
+        os.makedirs("uploads", exist_ok=True)
+
         save_path = os.path.join(
             "uploads",
             uploaded_file.name
