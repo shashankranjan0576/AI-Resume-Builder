@@ -62,16 +62,18 @@ def clean_ai_output(text):
 
     unwanted_phrases = [
 
-        "Here is an ATS-optimized resume",
-        "Here is a professional cover letter",
-        "Here’s a professional cover letter",
-        "Here is a rewritten version",
-        "Note:",
-        "I've kept the formatting",
-        "I have kept the formatting",
-        "Let me know if you need any further assistance",
-        "tailored to the",
-        "ATS Optimized Resume"
+        "ats-optimized resume",
+        "professional cover letter",
+        "rewritten version",
+        "let me know if you need",
+        "i've kept the formatting",
+        "i have kept the formatting",
+        "tailored to the target role",
+        "this resume is optimized",
+        "thank you for considering",
+        "here's",
+        "here is",
+        "note:"
     ]
 
     cleaned_lines = []
@@ -91,8 +93,18 @@ def clean_ai_output(text):
 
         if not should_skip:
 
+            line = line.replace("**", "")
+
+            # Convert only + bullets
+            if line.strip().startswith("+"):
+
+                line = line.replace("+", "•", 1)
+
             cleaned_lines.append(line)
 
     cleaned_text = "\n".join(cleaned_lines)
+    cleaned_text = cleaned_text.replace("**", "")
+    cleaned_text = cleaned_text.replace("* ", "")
+    cleaned_text = cleaned_text.replace("#", "")
 
     return cleaned_text.strip()
