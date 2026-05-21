@@ -215,6 +215,9 @@ if st.session_state.analysis_done:
         st.write(optimized_resume)
 
         # Create DOCX Resume
+
+        os.makedirs("outputs", exist_ok=True)
+
         resume_docx_path = "outputs/optimized_resume.docx"
 
         create_resume_docx(
@@ -268,6 +271,9 @@ if st.session_state.analysis_done:
 
 
         # Create DOCX Cover Letter
+
+        os.makedirs("outputs", exist_ok=True)
+
         cover_docx_path = "outputs/cover_letter.docx"
 
         create_resume_docx(
